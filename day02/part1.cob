@@ -34,27 +34,8 @@ PROCEDURE DIVISION.
            END-READ
 
            IF WS-EOF NOT = "Y"
-               MOVE "Y" TO WS-SAFE
                PERFORM PARSE-NUMBERS
-
-               PERFORM VARYING WS-IDX FROM 2 BY 1 UNTIL WS-IDX > 10
-                   IF WS-NUMBER(WS-IDX) NOT = 0
-                       SUBTRACT WS-NUMBER(WS-IDX - 1) FROM WS-NUMBER(WS-IDX) GIVING WS-DIFF
-                       COMPUTE WS-ABSDIFF = FUNCTION ABS(WS-DIFF)
-                       COMPUTE WS-SIGNDIFF = FUNCTION SIGN(WS-DIFF)
-                       
-                       IF (WS-ABSDIFF < 1) OR (WS-ABSDIFF > 3)
-                           *> Diff is too large
-                           MOVE "N" TO WS-SAFE
-                       END-IF
-                       IF (WS-IDX > 2) AND (WS-SIGNDIFF <> WS-SIGNLASTDIFF)
-                           *> Not all increasing or decreasing
-                           MOVE "N" TO WS-SAFE
-                       END-IF
-
-                       MOVE WS-SIGNDIFF TO WS-SIGNLASTDIFF
-                   END-IF
-               END-PERFORM
+               PERFORM TEST-SAFE
 
                IF WS-SAFE = "Y"
                    ADD 1 TO WS-SAFECOUNT
@@ -78,3 +59,24 @@ PARSE-NUMBERS.
        UNSTRING WS-TEMP
            DELIMITED BY ALL SPACES
            INTO WS-NUMBER(1), WS-NUMBER(2), WS-NUMBER(3), WS-NUMBER(4), WS-NUMBER(5), WS-NUMBER(6), WS-NUMBER(7), WS-NUMBER(8), WS-NUMBER(9), WS-NUMBER(10).
+
+TEST-SAFE.
+       MOVE "Y" TO WS-SAFE
+       PERFORM VARYING WS-IDX FROM 2 BY 1 UNTIL WS-IDX > 10
+           IF WS-NUMBER(WS-IDX) NOT = 0
+               SUBTRACT WS-NUMBER(WS-IDX - 1) FROM WS-NUMBER(WS-IDX) GIVING WS-DIFF
+               COMPUTE WS-ABSDIFF = FUNCTION ABS(WS-DIFF)
+               COMPUTE WS-SIGNDIFF = FUNCTION SIGN(WS-DIFF)
+
+               IF (WS-ABSDIFF < 1) OR (WS-ABSDIFF > 3)
+                   *> Diff is too large
+                   MOVE "N" TO WS-SAFE
+               END-IF
+               IF (WS-IDX > 2) AND (WS-SIGNDIFF <> WS-SIGNLASTDIFF)
+                   *> Not all increasing or decreasing
+                   MOVE "N" TO WS-SAFE
+               END-IF
+
+               MOVE WS-SIGNDIFF TO WS-SIGNLASTDIFF
+           END-IF
+       END-PERFORM.
