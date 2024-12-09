@@ -30,7 +30,6 @@ working-storage section.
 01 wsOrdered pic X(1).
 01 wsSum pic 9(5) value 0.
 01 wsMiddleIdx pic 9(3).
-01 wsMiddleNum pic 9(3).
 
 procedure division.
        open input InputFile
@@ -56,9 +55,7 @@ procedure division.
                perform split-numbers
 
                *> calc the 1-based index of the middle number
-               move wsNumCount to wsMiddleIdx
-               add 1 to wsMiddleIdx
-               divide wsMiddleIdx by 2 giving wsMiddleIdx
+               compute wsMiddleIdx = (wsNumCount + 1) / 2
 
                move "y" to wsOrdered
 
@@ -82,8 +79,7 @@ procedure division.
                end-perform
 
                if wsOrdered = "y"
-                   move wsPageNumber(wsMiddleIdx) to wsMiddleNum
-                   add wsMiddleNum to wsSum
+                   compute wsSum = wsSum + wsPageNumber(wsMiddleIdx)
                end-if
 
                add 1 to wsIdx
@@ -107,8 +103,7 @@ split-numbers.
                add 1 to p
 
                *> new start
-               move wsIdx2 to wsStart
-               add 1 to wsStart
+               compute wsStart = wsIdx2 + 1
            end-if
            add 1 to wsIdx2
        end-perform
