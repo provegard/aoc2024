@@ -1,5 +1,5 @@
 identification division.
-program-id. AOC202408P1.
+program-id. AOC202408P2.
 
 environment division.
 input-output section.
@@ -148,4 +148,4 @@ add-antenna.
        move wsY to wsAntennaY(wsFreqIdx, wsAntennaCount(wsFreqIdx))
        move wsX to wsAntennaX(wsFreqIdx, wsAntennaCount(wsFreqIdx)).
 
-end program AOC202408P1.
+end program AOC202408P2.
